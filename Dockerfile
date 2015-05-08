@@ -1,6 +1,6 @@
-FROM debian:wheezy
+FROM ubuntu:14.04
 
-MAINTAINER Henrik Sachse <t3x7m3@posteo.de>
+MAINTAINER OME
 
 #############################################
 # ApacheDS installation
@@ -16,12 +16,12 @@ ENV APACHEDS_GROUP apacheds
 
 VOLUME ${APACHEDS_DATA}
 
-ADD http://mirror.softaculous.com/apache/directory/apacheds/dist/${APACHEDS_VERSION}/${APACHEDS_ARCHIVE} ${APACHEDS_ARCHIVE}
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
     && apt-get update \
-    && apt-get install -y ldap-utils procps openjdk-7-jre-headless \
+    && apt-get install -y ldap-utils procps openjdk-7-jre-headless curl \
+    && curl http://www.eu.apache.org/dist//directory/apacheds/dist/${APACHEDS_VERSION}/${APACHEDS_ARCHIVE} > ${APACHEDS_ARCHIVE} \
     && dpkg -i ${APACHEDS_ARCHIVE} \
-	&& rm ${APACHEDS_ARCHIVE}
+    && rm ${APACHEDS_ARCHIVE}
 
 # Ports defined by the default instance configuration:
 # 10389: ldap
