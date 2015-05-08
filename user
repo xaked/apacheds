@@ -13,7 +13,22 @@ shift
 GROUPDN="cn=test,ou=Groups,dc=example,dc=com"
 USERDN="uid=$USER,ou=Users,dc=example,dc=com"
 
-if [ $1 = "add" ]; then
+if [ $1 = "group" ]; then
+    $LDAPADD << EOF
+dn: ou=Groups,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+-
+
+dn: cn=test,ou=Groups,dc=example,dc=com
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: test
+uniquemember: uid=$USER,ou=Users,dc=example,dc=com
+EOF
+elif [ $1 = "add" ]; then
 
     $LDAPADD << EOF
 version: 1
