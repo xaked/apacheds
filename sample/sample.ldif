@@ -29,7 +29,7 @@ sn: User
 uid: test
 mail: test@example.com
 ou: Users
-userpassword:: {PLAIN}test
+userpassword: test
 
 dn: cn=test,ou=Groups,dc=example,dc=com
 objectClass: groupOfUniqueNames
