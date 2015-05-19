@@ -52,6 +52,8 @@ RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
     && mkdir ${APACHEDS_BOOTSTRAP}/partitions \
     && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_BOOTSTRAP}
 
+COPY sample /tmp
+
 #############################################
 # ApacheDS wrapper command
 #############################################
