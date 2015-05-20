@@ -1,9 +1,9 @@
 #!/bin/bash
 
-LDAPHOST=${LDAPHOST:-localhost}
-LDAPPORT=${LDAPPORT:-389}
+LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
+LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
-GROUP=${GROUP:-test}
+GROUP=${GROUP:-ldap-private}
 
 LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 LDAPMODIFY="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
