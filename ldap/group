@@ -3,20 +3,17 @@
 LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=merge,dc=trout,dc=openmicroscopy,dc=org}
 
 LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
-LDAPMODIFY="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
-LDAPSEARCH="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 
 GROUP=$1
 shift
-DOMAIN="dc=merge,dc=trout,dc=openmicroscopy,dc=org"
-GROUPDN="cn=$GROUP,ou=Groups,$DOMAIN"
-USERDN="uid=test,ou=Users,$DOMAIN"
+USERDN="uid=test,ou=Users,$LDAPDOMAIN"
 
 if [ $1 = "add" ]; then
     $LDAPADD << EOF
-dn: cn=$GROUP,ou=Groups,$DOMAIN
+dn: cn=$GROUP,ou=Groups,$LDAPDOMAIN
 objectClass: groupOfUniqueNames
 objectClass: top
 cn: $GROUP

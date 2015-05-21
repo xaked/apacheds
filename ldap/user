@@ -4,15 +4,15 @@ LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
 GROUP=${GROUP:-ldap-private}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=merge,dc=trout,dc=openmicroscopy,dc=org}
+
 
 LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 LDAPMODIFY="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
-LDAPSEARCH="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 
 USER=$1
 shift
-DOMAIN="dc=merge,dc=trout,dc=openmicroscopy,dc=org"
-USERDN="uid=$USER,ou=Users,$DOMAIN"
+USERDN="uid=$USER,ou=Users,$LDAPDOMAIN"
 
 if  [ $1 = "add" ]; then
     $LDAPADD << EOF
@@ -36,7 +36,7 @@ EOF
 elif [ $1 = "in" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$DOMAIN"
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -47,7 +47,7 @@ EOF
 elif [ $1 = "out" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$DOMAIN"
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -58,7 +58,7 @@ EOF
 elif [ $1 = "owner" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$DOMAIN"
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
 
 $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -69,7 +69,7 @@ EOF
 elif [ $1 = "member" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$DOMAIN"
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN
