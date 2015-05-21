@@ -3,6 +3,6 @@
 LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
-LDAPDOMAIN=${LDAPDOMAIN:-dc=merge,dc=trout,dc=openmicroscopy,dc=org}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
 
 ldapdelete -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -D uid=admin,ou=system -x -r $LDAPDOMAIN

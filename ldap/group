@@ -3,7 +3,7 @@
 LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
-LDAPDOMAIN=${LDAPDOMAIN:-dc=merge,dc=trout,dc=openmicroscopy,dc=org}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
 
 LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 
