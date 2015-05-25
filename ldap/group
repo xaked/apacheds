@@ -9,7 +9,6 @@ LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w $
 
 GROUP=$1
 shift
-USERDN="uid=test,ou=Users,$LDAPDOMAIN"
 
 if [ $1 = "add" ]; then
     $LDAPADD << EOF
@@ -17,7 +16,7 @@ dn: cn=$GROUP,ou=Groups,$LDAPDOMAIN
 objectClass: groupOfUniqueNames
 objectClass: top
 cn: $GROUP
-uniqueMember: $USERDN
+uniqueMember: uid=dummy,ou=Users,$LDAPDOMAIN
 EOF
 
 else

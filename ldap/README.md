@@ -6,14 +6,9 @@ A collection of scripts to manage LDAP trees on the CI LDAP servers. Four script
 - [clear](clear) clears an existing LDAP tree
 - [initialize](initialize) initializes a new LDAP tree
 - [user](user) manages LDAP users (addition, group membership/ownership)
-- [user](user) manages LDAP groups (addition)
+- [group](group) manages LDAP groups (addition)
+- [search](search) searches the LDAP tree specified by the input domain
 
-The connection credentials and the tree domain are defined and can be overriden
-using four environment variable: `LDAPHOST, `LDAPPORT`, `LDAPPASS` and
-`LDAPDOMAIN`.
-
-To visualize the content of the tree, use ldapsearch
-
-````
-ldapsearch -h $LDAPHOST -p $LDAPPORT -x -D uid=admin,ou=system -W -b $LDAPDOMAIN
-````
+The connection credentials and the LDAP tree domain are defined and can be
+overriden using four environment variable: `LDAPHOST, `LDAPPORT`, `LDAPPASS` 
+and `LDAPDOMAIN`.
