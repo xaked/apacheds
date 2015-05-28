@@ -1,6 +1,5 @@
 FROM ubuntu:14.04
-
-MAINTAINER OME
+MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 #############################################
 # ApacheDS installation
@@ -51,8 +50,6 @@ RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
     && mkdir ${APACHEDS_BOOTSTRAP}/log \
     && mkdir ${APACHEDS_BOOTSTRAP}/partitions \
     && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_BOOTSTRAP}
-
-COPY sample /tmp
 
 #############################################
 # ApacheDS wrapper command
