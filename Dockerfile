@@ -1,6 +1,5 @@
 FROM ubuntu:14.04
-
-MAINTAINER OME
+MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 #############################################
 # ApacheDS installation
