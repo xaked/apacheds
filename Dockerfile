@@ -5,7 +5,7 @@ MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 # ApacheDS installation
 #############################################
 
-ENV APACHEDS_VERSION 2.0.0-M19
+ENV APACHEDS_VERSION 2.0.0-M21
 ENV APACHEDS_ARCH amd64
 
 ENV APACHEDS_ARCHIVE apacheds-${APACHEDS_VERSION}-${APACHEDS_ARCH}.deb
