@@ -45,6 +45,7 @@ RUN chown ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_CMD} \
     && chmod u+rx ${APACHEDS_CMD}
 
 ADD instance/* ${APACHEDS_BOOTSTRAP}/conf/
+ADD ome.ldif ${APACHEDS_BOOTSTRAP}/
 RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
     && mkdir ${APACHEDS_BOOTSTRAP}/run \
     && mkdir ${APACHEDS_BOOTSTRAP}/log \
