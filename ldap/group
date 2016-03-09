@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LDAPHOST=${LDAPHOST:-ldap-ci.docker.openmicroscopy.org}
+LDAPHOST=${LDAPHOST:-minke.openmicroscopy.org}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
 LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
