@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LDAPHOST=${LDAPHOST:-minke.openmicroscopy.org}
+LDAPHOST=${LDAPHOST:-localhost}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
 GROUP=${GROUP:-ldap-private}

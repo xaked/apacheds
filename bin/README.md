@@ -1,7 +1,8 @@
 LDAP
 ====
 
-A collection of scripts to manage LDAP trees on the CI LDAP servers. Four scripts are available:
+A collection of scripts for managing LDAP trees on LDAP servers
+created by this repository. Available scripts include:
 
 - [clear](clear) clears an existing LDAP tree
 - [initialize](initialize) initializes a new LDAP tree
@@ -10,5 +11,5 @@ A collection of scripts to manage LDAP trees on the CI LDAP servers. Four script
 - [search](search) searches the LDAP tree specified by the input domain
 
 The connection credentials and the LDAP tree domain are defined and can be
-overriden using four environment variable: `LDAPHOST, `LDAPPORT`, `LDAPPASS` 
+overriden using four environment variable: `LDAPHOST`, `LDAPPORT`, `LDAPPASS` 
 and `LDAPDOMAIN`.
