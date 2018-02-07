@@ -24,8 +24,9 @@ Example
 
 
 def main():
-    parser = argparse.ArgumentParser(description=DESCRIPTION,
-                                     formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=DESCRIPTION,
+        formatter_class=argparse.RawTextHelpFormatter)
     subparsers = parser.add_subparsers()
 
     # Connection settings #####################################################
@@ -36,6 +37,11 @@ def main():
     parser.add_argument("--bind-user", default="uid=admin,ou=system")
     parser.add_argument("--bind-pass", default="secret")
     parser.add_argument("--debug", action="store_true")
+
+    # Get #####################################################################
+    get = subparsers.add_parser("get")
+    get.set_defaults(func=_get)
+    get.add_argument("dn")
 
     # Search ##################################################################
     search = subparsers.add_parser("search")
@@ -129,6 +135,10 @@ def dn_group(ns, login):
     return dn(ns, login, ou="Groups")
 
 
+def get_by_dn(conn, dn):
+    return conn.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+
+
 def process(ns, dn, modlist, action="add"):
 
     # if "modify", assume list is already created
@@ -147,9 +157,10 @@ def process(ns, dn, modlist, action="add"):
                 elif action == "modify":
                     result = conn.modify_s(dn, modlist)
                 elif action == "delete":
-                    print dir(conn)
                     result = conn.delete_s(dn, modlist)
-                print result,
+                show_results(get_by_dn(conn, dn))
+                if ns.debug:
+                    print >>sys.stderr, result
             except ldap.LDAPError, le:
                 print le.args[0].get("info", "No info")
                 print le.args[0].get("desc", "No description")
@@ -161,23 +172,34 @@ def process(ns, dn, modlist, action="add"):
         writer.unparse(dn, modlist)
 
 
+def show_results(results):
+    for i, result in enumerate(results):
+        print "# {%s}" % i
+        print "dn:", result[0]
+        for k, vs in sorted(result[1].items()):
+            for v in vs:
+                print "%s: %s" % (k, v)
+
 #
 # COMMANDS
 #
 
 
+def _get(ns):
+    cleanup(ns)
+    conn = connection(ns)
+    try:
+        show_results(get_by_dn(conn, ns.dn))
+    finally:
+        conn.unbind()
+
+
 def _search(ns):
     cleanup(ns)
     conn = connection(ns)
-
     try:
-        results = conn.search_s(ns.base, ldap.SCOPE_SUBTREE, ns.query)
-        for i, result in enumerate(results):
-            print "# {%s}" % i
-            print "dn:", result[0]
-            for k, vs in result[1].items():
-                for v in vs:
-                    print "%s: %s" % (k, v)
+        show_results(
+            conn.search_s(ns.base, ldap.SCOPE_SUBTREE, ns.query))
     finally:
         conn.unbind()
 
