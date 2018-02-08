@@ -19,6 +19,8 @@ Example
     ./ldapo --apply member g1 u1 --remove
     ./ldapo --apply owner g1 u2 --remove
     ./ldapo --apply member g1 u2 --remove
+    ./ldapo --apply get uid=u2,ou=Users,dc=openmicroscopy,dc=org
+    ./ldapo --apply clear
 
 """
 
@@ -90,6 +92,11 @@ def main():
     group.add_argument("--add", action="store_true", default=True)
     group.add_argument("--remove", action="store_false",
                        dest="add", default=True)
+
+    # Clear ##################################################################
+    clear = subparsers.add_parser("clear")
+    clear.set_defaults(func=_clear)
+    clear.add_argument("dn", nargs="?", default="dc=openmicroscopy,dc=org")
 
     # Run #####################################################################
     ns = parser.parse_args()
@@ -300,6 +307,26 @@ def _owner(ns):
         action = ldap.MOD_DELETE
     modlist = [(action, "owner", [dn_user(ns, x)]) for x in ns.owner]
     process(ns, ns.dn, modlist, action="modify")
+
+
+def _clear(ns):
+    cleanup(ns)
+    conn = connection(ns)
+    try:
+        recursive_delete(conn, ns.dn, not ns.apply)
+    finally:
+        conn.unbind()
+
+
+def recursive_delete(conn, base_dn, dry_run=True):
+    search = conn.search_s(base_dn, ldap.SCOPE_ONELEVEL)
+    for dn, _ in search:
+        recursive_delete(conn, dn, dry_run)
+    if dry_run:
+        print "Would delete:", base_dn
+    else:
+        print "Deleting: ", base_dn
+        conn.delete_s(base_dn)
 
 
 if __name__ == "__main__":
