@@ -24,4 +24,6 @@ script:
     - bin/ldapo --apply user public --password public
     - bin/ldapo --apply group public --member public
     - bin/ldapo search 'uid=public'
+    - bin/ldapo search
+    - bin/ldapo --apply clear
     - docker rm -f apacheds-test

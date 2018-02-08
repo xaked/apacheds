@@ -48,7 +48,7 @@ def main():
     # Search ##################################################################
     search = subparsers.add_parser("search")
     search.set_defaults(func=_search)
-    search.add_argument("query")
+    search.add_argument("query", nargs="?", default="(objectClass=*)")
 
     # Init ####################################################################
     init = subparsers.add_parser("init")
