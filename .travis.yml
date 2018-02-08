@@ -20,10 +20,11 @@ script:
     - bin/search
     - yes | bin/clear
     - echo "New style"
-    - bin/ldapo --apply init
-    - bin/ldapo --apply user public --password public
-    - bin/ldapo --apply group public --member public
+    - bin/ldapo init
+    - bin/ldapo user public --password public
+    - bin/ldapo group public --member public
+    - bin/ldapo get 'uid=public,ou=Users,dc=openmicroscopy,dc=org'
     - bin/ldapo search 'uid=public'
     - bin/ldapo search
-    - bin/ldapo --apply clear
+    - bin/ldapo clear
     - docker rm -f apacheds-test

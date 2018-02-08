@@ -32,7 +32,11 @@ def main():
     subparsers = parser.add_subparsers()
 
     # Connection settings #####################################################
-    parser.add_argument("--apply", "-f", action="store_true")
+    do_or_do_not = parser.add_mutually_exclusive_group()
+    do_or_do_not.add_argument("--apply", "-f",
+                              action="store_true", default=True)
+    do_or_do_not.add_argument("--dry-run", "-n", default=True,
+                              action="store_false", dest="apply")
     parser.add_argument("--url", default="ldap://127.0.0.1:10389")
     parser.add_argument("--base", default=None, help="Uses 'host' if undefined")
     parser.add_argument("--host", default="openmicroscopy.org")
