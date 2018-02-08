@@ -11,16 +11,16 @@ DESCRIPTION = """opinionated-creation of users & groups for OMERO
 
 Example
 -------
-    ./ldapo --apply init
-    ./ldapo --apply user u1
-    ./ldapo --apply user u2
-    ./ldapo --apply user u3
-    ./ldapo --apply group g1 --member u1 --owner u2 --owner -u3
-    ./ldapo --apply member g1 u1 --remove
-    ./ldapo --apply owner g1 u2 --remove
-    ./ldapo --apply member g1 u2 --remove
-    ./ldapo --apply get uid=u2,ou=Users,dc=openmicroscopy,dc=org
-    ./ldapo --apply clear
+    ./ldapmanager init
+    ./ldapmanager user u1
+    ./ldapmanager user u2
+    ./ldapmanager user u3
+    ./ldapmanager group g1 --member u1 --owner u2 --owner -u3
+    ./ldapmanager member g1 u1 --remove
+    ./ldapmanager owner g1 u2 --remove
+    ./ldapmanager member g1 u2 --remove
+    ./ldapmanager get uid=u2,ou=Users,dc=openmicroscopy,dc=org
+    ./ldapmanager clear
 
 """
 
