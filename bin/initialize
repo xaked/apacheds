@@ -8,12 +8,6 @@ LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
 ldapadd -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -D uid=admin,ou=system -x  << EOF
 version: 1
 
-dn: $LDAPDOMAIN
-objectClass: extensibleObject
-objectClass: domain
-objectClass: top
-dc: trout
-
 dn: ou=Users,$LDAPDOMAIN
 objectClass: organizationalUnit
 objectClass: top

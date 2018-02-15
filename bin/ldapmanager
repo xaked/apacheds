@@ -219,13 +219,6 @@ def _init(ns):
     cleanup(ns)
 
     actions = [
-        (ns.base, {
-            "objectClass": [
-                "extensibleObject",
-                "domain",
-                "top"
-            ],
-        }),
         ("ou=Users,%s" % ns.base, {
             "objectClass": [
                 "organizationalUnit",
