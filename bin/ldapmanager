@@ -49,6 +49,11 @@ def main():
     get.set_defaults(func=_get)
     get.add_argument("dn")
 
+    # Ldappwd #####################################################################
+    ldappwd = subparsers.add_parser("ldappwd")
+    ldappwd.set_defaults(func=_ldappwd)
+    ldappwd.add_argument("--new-pass")
+
     # Search ##################################################################
     search = subparsers.add_parser("search")
     search.set_defaults(func=_search)
@@ -203,6 +208,14 @@ def _get(ns):
         show_results(get_by_dn(conn, ns.dn))
     finally:
         conn.unbind()
+
+
+def _ldappwd(ns):
+    cleanup(ns)
+
+    dn = "uid=admin,ou=system"
+    modlist = [(ldap.MOD_REPLACE, "userPassword", ns.new_pass)]
+    process(ns, dn, modlist, action="modify")
 
 
 def _search(ns):
