@@ -7,7 +7,15 @@ import ldap
 import ldap.modlist
 import ldif
 import sys
+import os
 
+LDAP_ADMIN_DN = os.environ.get("LDAP_ADMIN_DN", "uid=admin,ou=system")
+LDAP_ADMIN_PW = os.environ.get("LDAP_ADMIN_PASSWORD", "secret")
+LDAP_DOMAIN = os.environ.get("LDAP_DOMAIN", "openmicroscopy.org")
+LDAP_HOST = os.environ.get("LDAP_HOST", "127.0.0.1")
+LDAP_PORT = os.environ.get("LDAP_PORT", "10389")
+LDAP_URL = "ldap://%s:%s" % (LDAP_HOST, LDAP_PORT)
+LDAP_URL = os.environ.get("LDAP_URL", LDAP_URL)
 
 DESCRIPTION = """opinionated-creation of users & groups for OMERO
 
@@ -22,13 +30,12 @@ Example
     ./ldapmanager user u2
     ./ldapmanager user u3
 
-    ./ldapmanager passwd u1  # Requires input
-    ./ldapmanager passwd u1 --password secret
-    echo secret | ./ldapmanager password u1 -f-
+    ./ldapmanager passwd --login u1  # Requires input
+    ./ldapmanager passwd --login u1 --password secret
+    echo secret | ./ldapmanager passwd u1 -f-
 
-    ./ldapmanager adminpasswd  # Requires input
-    ./ldapmanager adminpasswd --password secret
-    echo secret | ./ldapmanager adminpasswd -f-
+    ./ldapmanager passwd --admin
+    ./ldapmanager passwd # current user
 
     ./ldapmanager group g1 --member u1 --owner u2 --owner -u3
     ./ldapmanager member g1 u1 --remove
@@ -52,24 +59,17 @@ def main():
                               action="store_true", default=True)
     do_or_do_not.add_argument("--dry-run", "-n", default=True,
                               action="store_false", dest="apply")
-    parser.add_argument("--url", default="ldap://127.0.0.1:10389")
+    parser.add_argument("--url", default=LDAP_URL)
     parser.add_argument("--base", default=None, help="Uses 'host' if undefined")
-    parser.add_argument("--host", default="openmicroscopy.org")
-    parser.add_argument("--bind-user", default="uid=admin,ou=system")
-    parser.add_argument("--bind-pass", default="secret")
+    parser.add_argument("--host", default=LDAP_DOMAIN)
+    parser.add_argument("--bind-user", default=LDAP_ADMIN_DN)
+    parser.add_argument("--bind-pass", default=LDAP_ADMIN_PW)
     parser.add_argument("--debug", action="store_true")
 
     # Get #####################################################################
     get = subparsers.add_parser("get")
     get.set_defaults(func=_get)
     get.add_argument("dn")
-
-    # Adminpasswd #############################################################
-    adminpasswd = subparsers.add_parser("adminpasswd")
-    adminpasswd.set_defaults(func=_adminpasswd)
-    adminpasswd.add_argument("--append", "-a", action="store_true")
-    adminpasswd.add_argument("--password", "-p", default=None, action="append")
-    adminpasswd.add_argument("--file", "-f", default=None, action="append")
 
     # Search ##################################################################
     search = subparsers.add_parser("search")
@@ -93,12 +93,39 @@ def main():
         "If no mail address is iset, login and base will be used"))
 
     # Passwd ################################################################
-    passwd = subparsers.add_parser("passwd")
+    passwd = subparsers.add_parser(
+        "passwd", help="reset or add passwords for users",
+        description="""
+Each user can have one or more passwords. This command allows either replacing
+all current passwords (default) or appending passwords with --append. Passwords
+can be set for one user at a time. If no option is chosen, then the current user
+(--bind-user) will be used. --admin will use the value of $LDAP_ADMIN_DN
+(default: uid=admin,ou=system) while --login will change the password of a user
+in ou=Users. --dn can be used to explicitly pass any distinguished name. One or
+more passwords can be set from both the command-line, using --password, or via
+file inputs. If you are on an untrusted system, prefer file inputs. If no
+password is passed, then a secure dialog will be opened to ask for one.""")
+
     passwd.set_defaults(func=_passwd)
-    passwd.add_argument("user", metavar="USER")
-    passwd.add_argument("--append", "-a", action="store_true")
-    passwd.add_argument("--password", "-p", default=None, action="append")
-    passwd.add_argument("--file", "-f", default=None, action="append")
+
+    who = passwd.add_mutually_exclusive_group()
+    who.add_argument("--admin", action="store_true",
+                     help="Change password for %s" % LDAP_ADMIN_DN)
+    who.add_argument("--login", dest="login", default=None,
+                     help="Change password for the given user")
+    who.add_argument("--dn", dest="dn", default=None,
+                     help="Change password for the given DN")
+
+    pw = passwd.add_mutually_exclusive_group()
+    pw.add_argument("--append", "-a", action="store_true",
+                    help="Add one or more new passwords")
+    pw.add_argument("--replace", "-r", action="store_false", dest="append",
+                    help="Replace all current passwords")
+
+    passwd.add_argument("--password", "-p", default=None, action="append",
+                        help="Pass passwords on command-line (unsafe)")
+    passwd.add_argument("--file", "-f", default=None, action="append",
+                        help="Pass passwords via file or stdin")
 
     # Group ###################################################################
     group = subparsers.add_parser("group")
@@ -235,27 +262,6 @@ def _get(ns):
         conn.unbind()
 
 
-def _adminpasswd(ns):
-    cleanup(ns)
-
-    passwords = []
-    if ns.password:
-        passwords.extend(ns.password)
-    if ns.file:
-        for line in fileinput.input(ns.file):
-            passwords.append(line.strip())
-
-    if not passwords:
-        passwords.append(getpass.getpass())
-
-    dn = "uid=admin,ou=system"
-    if ns.append:
-        modlist = [(ldap.MOD_ADD, 'userPassword', passwords)]
-    else:
-        modlist = [(ldap.MOD_REPLACE, 'userPassword', passwords)]
-    process(ns, dn, modlist, action="modify")
-
-
 def _search(ns):
     cleanup(ns)
     conn = connection(ns)
@@ -318,9 +324,24 @@ def _user(ns):
         modlist["userPassword"] = ns.password
     process(ns, ns.dn, modlist)
 
+
 def _passwd(ns):
+
+    # Who: If a DN or a login was passed, login as that user.
+    # Otherwise, login as the current user
+    if ns.admin:
+        dn = LDAP_ADMIN_DN
+    elif ns.dn:
+        dn = ns.dn
+    elif ns.login:
+        dn = dn_user(ns, ns.login)
+    else:
+        dn = ns.bind_user
+
     cleanup(ns)
 
+    # What: Gather all passwords from the command-line and from stdin
+    # If none were passed, then ask the user for one.
     passwords = []
     if ns.password:
         passwords.extend(ns.password)
@@ -331,7 +352,6 @@ def _passwd(ns):
     if not passwords:
         passwords.append(getpass.getpass())
 
-    dn = dn_user(ns, ns.user)
     if ns.append:
         modlist = [(ldap.MOD_ADD, 'userPassword', passwords)]
     else:
