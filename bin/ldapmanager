@@ -100,7 +100,7 @@ Each user can have one or more passwords. This command allows either replacing
 all current passwords (default) or appending passwords with --append. Passwords
 can be set for one user at a time. If no option is chosen, then the current user
 (--bind-user) will be used. --admin will use the value of $LDAP_ADMIN_DN
-(default: uid=admin,ou=system) while --login will change the password of a user
+(default: uid=admin,ou=system) while --login can be used to specify a user
 in ou=Users. --dn can be used to explicitly pass any distinguished name. One or
 more passwords can be set from both the command-line, using --password, or via
 file inputs. If you are on an untrusted system, prefer file inputs. If no
