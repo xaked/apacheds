@@ -90,7 +90,7 @@ def main():
     user.add_argument("--dn", default=None, help=(
         "If no DN is set, login and base will be used"))
     user.add_argument("--mail", default=None, help=(
-        "If no mail address is iset, login and base will be used"))
+        "If no mail address is is set, login and base will be used"))
 
     # Passwd ################################################################
     passwd = subparsers.add_parser(
@@ -327,6 +327,8 @@ def _user(ns):
 
 def _passwd(ns):
 
+    cleanup(ns)
+
     # Who: If a DN or a login was passed, login as that user.
     # Otherwise, login as the current user
     if ns.admin:
@@ -337,8 +339,6 @@ def _passwd(ns):
         dn = dn_user(ns, ns.login)
     else:
         dn = ns.bind_user
-
-    cleanup(ns)
 
     # What: Gather all passwords from the command-line and from stdin
     # If none were passed, then ask the user for one.
