@@ -22,8 +22,8 @@ Example
     ./ldapmanager user u2
     ./ldapmanager user u3
 
-    ./ldapmanager password u1  # Requires input
-    ./ldapmanager password u1 --password secret
+    ./ldapmanager passwd u1  # Requires input
+    ./ldapmanager passwd u1 --password secret
     echo secret | ./ldapmanager password u1 -f-
 
     ./ldapmanager adminpasswd  # Requires input
@@ -92,13 +92,13 @@ def main():
     user.add_argument("--mail", default=None, help=(
         "If no mail address is iset, login and base will be used"))
 
-    # Password ################################################################
-    password = subparsers.add_parser("password")
-    password.set_defaults(func=_password)
-    password.add_argument("user", metavar="USER")
-    password.add_argument("--append", "-a", action="store_true")
-    password.add_argument("--password", "-p", default=None, action="append")
-    password.add_argument("--file", "-f", default=None, action="append")
+    # Passwd ################################################################
+    passwd = subparsers.add_parser("passwd")
+    passwd.set_defaults(func=_passwd)
+    passwd.add_argument("user", metavar="USER")
+    passwd.add_argument("--append", "-a", action="store_true")
+    passwd.add_argument("--password", "-p", default=None, action="append")
+    passwd.add_argument("--file", "-f", default=None, action="append")
 
     # Group ###################################################################
     group = subparsers.add_parser("group")
@@ -318,7 +318,7 @@ def _user(ns):
         modlist["userPassword"] = ns.password
     process(ns, ns.dn, modlist)
 
-def _password(ns):
+def _passwd(ns):
     cleanup(ns)
 
     passwords = []
