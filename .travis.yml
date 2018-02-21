@@ -26,7 +26,7 @@ script:
     - bin/ldapmanager get 'uid=public,ou=Users,dc=openmicroscopy,dc=org'
     - bin/ldapmanager search 'uid=public'
     - bin/ldapmanager --bind-user uid=public,ou=Users,dc=openmicroscopy,dc=org --bind-pass public search
-    - bin/ldapmanager --bind-user uid=public,ou=Users,dc=openmicroscopy,dc=org --bind-pass public passwd --password first --password second
+    - bin/ldapmanager --bind-user uid=public,ou=Users,dc=openmicroscopy,dc=org --bind-pass public passwd --login public --password first --password second
     - bin/ldapmanager --bind-user uid=public,ou=Users,dc=openmicroscopy,dc=org --bind-pass first search
     - bin/ldapmanager --bind-user uid=public,ou=Users,dc=openmicroscopy,dc=org --bind-pass second search
     - bin/ldapmanager passwd --admin --append --password backdoor

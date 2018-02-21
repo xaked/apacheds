@@ -32,10 +32,10 @@ Example
 
     ./ldapmanager passwd --login u1  # Requires input
     ./ldapmanager passwd --login u1 --password secret
-    echo secret | ./ldapmanager passwd u1 -f-
+    echo secret | ./ldapmanager passwd --login u1 -f-
 
     ./ldapmanager passwd --admin
-    ./ldapmanager passwd # current user
+    ./ldapmanager passwd --dn uid=admin,ou=secret
 
     ./ldapmanager group g1 --member u1 --owner u2 --owner -u3
     ./ldapmanager member g1 u1 --remove
@@ -108,7 +108,7 @@ password is passed, then a secure dialog will be opened to ask for one.""")
 
     passwd.set_defaults(func=_passwd)
 
-    who = passwd.add_mutually_exclusive_group()
+    who = passwd.add_mutually_exclusive_group(required=True)
     who.add_argument("--admin", action="store_true",
                      help="Change password for %s" % LDAP_ADMIN_DN)
     who.add_argument("--login", dest="login", default=None,
