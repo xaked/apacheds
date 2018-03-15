@@ -53,6 +53,9 @@ RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
     && mkdir ${APACHEDS_BOOTSTRAP}/partitions \
     && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_BOOTSTRAP}
 
+RUN apt-get install -y python-ldap
+ADD bin/ldapmanager /usr/local/bin/ldapmanager
+
 #############################################
 # ApacheDS wrapper command
 #############################################
