@@ -9,6 +9,7 @@
 # APACHEDS_GROUP
 
 APACHEDS_INSTANCE_DIRECTORY=${APACHEDS_DATA}/${APACHEDS_INSTANCE}
+PIDFILE="${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid"
 
 # When a fresh data folder is detected then bootstrap the instance configuration.
 if [ ! -d ${APACHEDS_INSTANCE_DIRECTORY} ]; then
@@ -18,7 +19,6 @@ if [ ! -d ${APACHEDS_INSTANCE_DIRECTORY} ]; then
 fi
 
 cleanup(){
-    PIDFILE="${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid"
     if [ -e "${PIDFILE}" ];
     then
         echo "Cleaning up ${PIDFILE}"
@@ -26,14 +26,16 @@ cleanup(){
     fi
 }
 
+trap cleanup EXIT
+cleanup
+
+/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds start ${APACHEDS_INSTANCE}
+sleep 2  # Wait on new pid
+
 shutdown(){
     echo "Shutting down..."
     /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds stop ${APACHEDS_INSTANCE}
 }
 
-trap shutdown TERM
-trap cleanup EXIT
-cleanup
-
-# Execute the server in console mode and not as a daemon.
-/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds repair ${APACHEDS_INSTANCE}
+trap shutdown INT TERM
+tail --pid=$(cat $PIDFILE) -f /dev/null
