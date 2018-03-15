@@ -17,5 +17,17 @@ if [ ! -d ${APACHEDS_INSTANCE_DIRECTORY} ]; then
     chown -v -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_INSTANCE_DIRECTORY}
 fi
 
+cleanup(){
+    PIDFILE="${APACHEDS_INSTANCE_DIRECTORY}/run/apacheds-${APACHEDS_INSTANCE}.pid"
+    if [ -e "${PIDFILE}" ];
+    then
+        echo "Cleaning up ${PIDFILE}"
+        rm "${PIDFILE}"
+    fi
+}
+
+cleanup
+trap cleanup EXIT
+
 # Execute the server in console mode and not as a daemon.
-exec /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
+/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
