@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/dumb-init /bin/bash
 
 # Environment variables:
 # APACHEDS_VERSION
@@ -18,4 +18,4 @@ if [ ! -d ${APACHEDS_INSTANCE_DIRECTORY} ]; then
 fi
 
 # Execute the server in console mode and not as a daemon.
-/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
+exec /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
