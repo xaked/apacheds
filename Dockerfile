@@ -9,10 +9,11 @@ ENV APACHEDS_VERSION 2.0.0-M24
 ENV APACHEDS_ARCH amd64
 
 ENV APACHEDS_ARCHIVE apacheds-${APACHEDS_VERSION}-${APACHEDS_ARCH}.deb
-ENV APACHEDS_DATA /var/lib/apacheds-${APACHEDS_VERSION}
+ENV APACHEDS_DATA /var/lib/apacheds
 ENV APACHEDS_USER apacheds
 ENV APACHEDS_GROUP apacheds
 
+RUN ln -s ${APACHEDS_DATA}-${APACHEDS_VERSION} ${APACHDS_DATA}
 VOLUME ${APACHEDS_DATA}
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
@@ -55,5 +56,8 @@ RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
 #############################################
 # ApacheDS wrapper command
 #############################################
+
+# Correct for hard-coded INSTANCES_DIRECTORY variable
+RUN sed -i 's#/var/lib/apacheds-2.0.0-M24#/var/lib/apacheds#' /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds
 
 CMD ${APACHEDS_CMD}
