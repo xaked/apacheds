@@ -61,7 +61,7 @@ ADD bin/ldapmanager /usr/local/bin/ldapmanager
 #############################################
 
 # Correct for hard-coded INSTANCES_DIRECTORY variable
-RUN sed -i 's#/var/lib/apacheds-2.0.0-M24#/var/lib/apacheds#' /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds
+RUN sed -i "s#/var/lib/apacheds-${APACHEDS_VERSION}#/var/lib/apacheds#" /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds
 
 
 RUN curl -L -o /usr/local/bin/dumb-init \
