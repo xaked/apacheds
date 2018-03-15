@@ -26,8 +26,14 @@ cleanup(){
     fi
 }
 
-cleanup
+shutdown(){
+    echo "Shutting down..."
+    /opt/apacheds-${APACHEDS_VERSION}/bin/apacheds stop ${APACHEDS_INSTANCE}
+}
+
+trap shutdown TERM
 trap cleanup EXIT
+cleanup
 
 # Execute the server in console mode and not as a daemon.
-/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds console ${APACHEDS_INSTANCE}
+/opt/apacheds-${APACHEDS_VERSION}/bin/apacheds repair ${APACHEDS_INSTANCE}
