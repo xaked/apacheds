@@ -38,4 +38,4 @@ shutdown(){
 }
 
 trap shutdown INT TERM
-tail --pid=$(cat $PIDFILE) -f /dev/null
+tail -n 0 --pid=$(cat $PIDFILE) -f ${APACHEDS_INSTANCE_DIRECTORY}/log/apacheds.log

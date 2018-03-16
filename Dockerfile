@@ -13,7 +13,7 @@ ENV APACHEDS_DATA /var/lib/apacheds
 ENV APACHEDS_USER apacheds
 ENV APACHEDS_GROUP apacheds
 
-RUN ln -s ${APACHEDS_DATA}-${APACHEDS_VERSION} ${APACHDS_DATA}
+RUN ln -s ${APACHEDS_DATA}-${APACHEDS_VERSION} ${APACHEDS_DATA}
 VOLUME ${APACHEDS_DATA}
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
@@ -39,11 +39,9 @@ EXPOSE 10389 10636 60088 60464 8080 8443
 ENV APACHEDS_INSTANCE default
 ENV APACHEDS_BOOTSTRAP /bootstrap
 
-ENV APACHEDS_SCRIPT run.sh
-ENV APACHEDS_CMD /${APACHEDS_SCRIPT}
-ADD scripts/${APACHEDS_SCRIPT} ${APACHEDS_CMD}
-RUN chown ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_CMD} \
-    && chmod u+rx ${APACHEDS_CMD}
+ADD scripts/run.sh /run.sh
+RUN chown ${APACHEDS_USER}:${APACHEDS_GROUP} /run.sh \
+    && chmod u+rx /run.sh
 
 ADD instance/* ${APACHEDS_BOOTSTRAP}/conf/
 ADD ome.ldif ${APACHEDS_BOOTSTRAP}/
