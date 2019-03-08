@@ -1,11 +1,11 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER ome-devel@lists.openmicroscopy.org.uk
 
 #############################################
 # ApacheDS installation
 #############################################
 
-ENV APACHEDS_VERSION 2.0.0-M24
+ENV APACHEDS_VERSION 2.0.0.AM25
 ENV APACHEDS_ARCH amd64
 
 ENV APACHEDS_ARCHIVE apacheds-${APACHEDS_VERSION}-${APACHEDS_ARCH}.deb
@@ -18,7 +18,8 @@ VOLUME ${APACHEDS_DATA}
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
     && apt-get update \
-    && apt-get install -y ldap-utils procps openjdk-7-jre-headless curl jq \
+    && apt-get install -y apt-utils \
+    && apt-get install -y ldap-utils procps openjdk-8-jre-headless curl jq \
     && curl http://www.eu.apache.org/dist//directory/apacheds/dist/${APACHEDS_VERSION}/${APACHEDS_ARCHIVE} > ${APACHEDS_ARCHIVE} \
     && dpkg -i ${APACHEDS_ARCHIVE} \
     && rm ${APACHEDS_ARCHIVE}
