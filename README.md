@@ -8,7 +8,7 @@ The project sources can be found on [GitHub](https://github.com/openmicroscopy/a
 ## Build
 
     git clone https://github.com/openmicroscopy/apacheds-docker.git
-    docker build -t openmicroscopy/apacheds apacheds-docker
+    docker build -t openmicroscopy/apacheds:2.0.0.AM26 apacheds-docker
 
 
 ## Installation
