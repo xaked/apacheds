@@ -42,28 +42,16 @@ It would be possible to use this ApacheDS image to provide a [Kerberos server](h
 
 Also other services are possible. For further information read the [configuration documentation](https://directory.apache.org/apacheds/advanced-ug/2.1-config-description.html).
 
-### Same configuration with different root DC
+### Custom Root DC
 
-To customize the existing configuration with your own root DC.
-
-1. Find and replace a number of instances of 
-  a. `dc=org` and `dc: org` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
-  b. `openmicroscopy.org` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
-  c. `openmicroscopy` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
-2. Build the container
+To customize the existing configuration with a different root DC you need to find a replace a number of strings within `ome.ldfi`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `openmicroscopy.org` and `openmicroscopy`.
 
 For a custom root dc of `example.com`:
 
-```bash
+```shell
 $ sed -i 's/openmicroscopy/example/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 $ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 $ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
-$ docker build . -t example/apacheds
-...
-Successfully tagged example/apacheds:latest
-$ docker run -d -p 389:10389 --name apacheds -e LDAP_DOMAIN=example.com -v ./instance:/bootstrap/conf example/apacheds
-...
-Starting ApacheDS - default...
-[12:15:44] WARN [org.apache.directory.server.core.DefaultDirectoryService] - You didn't change the admin password of directory service instance 'default'.  Please update the admin password as soon as possible to prevent a possible security breach.
-...
 ```
+
+Then [build](##-Build), [install](##-Installation) and [use](##-Usage) as your normally would.
