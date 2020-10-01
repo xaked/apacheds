@@ -42,3 +42,29 @@ It would be possible to use this ApacheDS image to provide a [Kerberos server](h
 
 Also other services are possible. For further information read the [configuration documentation](https://directory.apache.org/apacheds/advanced-ug/2.1-config-description.html).
 
+### Same configuration with different root DC
+
+To customize the existing configuration with your own root DC.
+
+1. Find and replace a number of instances of 
+  a. `dc=org` and `dc: org` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
+  b. `openmicroscopy.org` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
+  c. `openmicroscopy` within the files `ome.ldfi`, `./instance/config.ldif` an `./instance/ads-contextentry.decoded`.
+2. Build the container
+
+For a custom root dc of `example.com`:
+
+```
+$ sed -i 's/openmicroscopy/example/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ docker build . -t example/apacheds
+...
+Successfully tagged example/apacheds:latest
+$ docker run -d -p 389:10389 --name apacheds -e LDAP_DOMAIN=example.com -v ./instance:/bootstrap/conf example/apacheds
+...
+Starting ApacheDS - default...
+[12:15:44] WARN [org.apache.directory.server.core.DefaultDirectoryService] - You didn't change the admin password of directory service instance 'default'.  Please update the admin password as soon as possible to prevent a possible security breach.
+```
+
+
