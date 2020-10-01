@@ -54,7 +54,7 @@ To customize the existing configuration with your own root DC.
 
 For a custom root dc of `example.com`:
 
-```
+```bash
 $ sed -i 's/openmicroscopy/example/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 $ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 $ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
@@ -65,6 +65,5 @@ $ docker run -d -p 389:10389 --name apacheds -e LDAP_DOMAIN=example.com -v ./ins
 ...
 Starting ApacheDS - default...
 [12:15:44] WARN [org.apache.directory.server.core.DefaultDirectoryService] - You didn't change the admin password of directory service instance 'default'.  Please update the admin password as soon as possible to prevent a possible security breach.
+...
 ```
-
-
