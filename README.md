@@ -54,4 +54,4 @@ $ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-cont
 $ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 ```
 
-Then [build](##-Build), [install](##-Installation) and [use](##-Usage) as your normally would.
+Then [build](##-Build), [install](##-Installation) and [use](##-Usage) as you normally would.
