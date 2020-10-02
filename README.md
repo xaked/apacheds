@@ -44,7 +44,7 @@ Also other services are possible. For further information read the [configuratio
 
 ### Custom Root DC
 
-To customize the existing configuration with a different root DC you need to find a replace a number of strings within `ome.ldfi`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `openmicroscopy.org` and `openmicroscopy`.
+To customize the existing configuration with a different root DC you need to find and replace a number of strings within `ome.ldif`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `openmicroscopy.org` and `openmicroscopy`.
 
 For a custom root dc of `example.com`:
 
