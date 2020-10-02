@@ -42,3 +42,16 @@ It would be possible to use this ApacheDS image to provide a [Kerberos server](h
 
 Also other services are possible. For further information read the [configuration documentation](https://directory.apache.org/apacheds/advanced-ug/2.1-config-description.html).
 
+### Custom Root DC
+
+To customize the existing configuration with a different root DC you need to find and replace a number of strings within `ome.ldif`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `openmicroscopy.org` and `openmicroscopy`.
+
+For a custom root dc of `example.com`:
+
+```shell
+$ sed -i 's/openmicroscopy/example/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+```
+
+Then [build](##-Build), [install](##-Installation) and [use](##-Usage) as you normally would.
