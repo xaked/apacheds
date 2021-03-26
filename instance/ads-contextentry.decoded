@@ -1,4 +1,4 @@
-dn: dc=openmicroscopy,dc=org
-dc: openmicroscopy
+dn: dc=ossystem,dc=ua
+dc: ossystem
 objectclass: domain
 objectclass: top

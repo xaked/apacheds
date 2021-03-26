@@ -3,7 +3,7 @@
 LDAPHOST=${LDAPHOST:-localhost}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
-LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=ossystem,dc=ua}
 
 LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
 

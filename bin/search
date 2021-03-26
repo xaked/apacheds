@@ -3,6 +3,6 @@
 LDAPHOST=${LDAPHOST:-localhost}
 LDAPPORT=${LDAPPORT:-10389}
 LDAPPASS=${LDAPPASS:-secret}
-LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=ossystem,dc=ua}
 
 ldapsearch -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -x -D uid=admin,ou=system -b $LDAPDOMAIN

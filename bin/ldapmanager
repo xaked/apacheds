@@ -11,7 +11,7 @@ import os
 
 LDAP_ADMIN_DN = os.environ.get("LDAP_ADMIN_DN", "uid=admin,ou=system")
 LDAP_ADMIN_PW = os.environ.get("LDAP_ADMIN_PASSWORD", "secret")
-LDAP_DOMAIN = os.environ.get("LDAP_DOMAIN", "openmicroscopy.org")
+LDAP_DOMAIN = os.environ.get("LDAP_DOMAIN", "ossystem.ua")
 LDAP_HOST = os.environ.get("LDAP_HOST", "127.0.0.1")
 LDAP_PORT = os.environ.get("LDAP_PORT", "10389")
 LDAP_URL = "ldap://%s:%s" % (LDAP_HOST, LDAP_PORT)
@@ -41,7 +41,7 @@ Example
     ./ldapmanager member g1 u1 --remove
     ./ldapmanager owner g1 u2 --remove
     ./ldapmanager member g1 u2 --remove
-    ./ldapmanager get uid=u2,ou=Users,dc=openmicroscopy,dc=org
+    ./ldapmanager get uid=u2,ou=Users,dc=ossystem,dc=ua
     ./ldapmanager clear
 
 """
@@ -160,8 +160,8 @@ password is passed, then a secure dialog will be opened to ask for one.""")
     clear.add_argument("dn", nargs="*",
                        help="Defaults to 'Users' and 'Groups'",
                        default=(
-                           "ou=Groups,dc=openmicroscopy,dc=org",
-                           "ou=Users,dc=openmicroscopy,dc=org",
+                           "ou=Groups,dc=ossystem,dc=ua",
+                           "ou=Users,dc=ossystem,dc=ua",
                        ))
 
     # Run #####################################################################
