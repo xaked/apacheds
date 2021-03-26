@@ -22,7 +22,7 @@ The container can be started issuing the following command:
 
 ## Usage
 
-You can manage the ldap server with the admin user *uid=admin,ou=system* and the default password *secret*. The *default* instance comes with a pre-configured partition *dc=xaked,dc=org*.
+You can manage the ldap server with the admin user *uid=admin,ou=system* and the default password *secret*. The *default* instance comes with a pre-configured partition *dc=ossystem,dc=ua*.
 
 An individual admin password should be set following [this manual](https://directory.apache.org/apacheds/basic-ug/1.4.2-changing-admin-password.html).
 
@@ -44,14 +44,14 @@ Also other services are possible. For further information read the [configuratio
 
 ### Custom Root DC
 
-To customize the existing configuration with a different root DC you need to find and replace a number of strings within `ome.ldif`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `xaked.org` and `xaked`.
+To customize the existing configuration with a different root DC you need to find and replace a number of strings within `base.ldif`, `instance/config.ldif` and `instance/ads-contextentry.decoded`. Specifically find and replace `dc=org`, `dc: org`, `xaked.org` and `xaked`.
 
 For a custom root dc of `example.com`:
 
 ```shell
-$ sed -i 's/xaked/example/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
-$ sed -i 's/dc=org/dc=com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
-$ sed -i 's/dc: org/dc: com/g' ome.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/ossystem/example/g' base.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc=ua/dc=com/g' base.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
+$ sed -i 's/dc: ua/dc: com/g' base.ldif ./instance/config.ldif ./instance/ads-contextentry.decoded
 ```
 
 Then [build](##-Build), [install](##-Installation) and [use](##-Usage) as you normally would.
