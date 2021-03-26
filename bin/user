@@ -12,7 +12,7 @@ LDAPMODIFY="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=syste
 
 USER=$1
 shift
-USERDN="uid=$USER,ou=Users,$LDAPDOMAIN"
+USERDN="uid=$USER,ou=users,$LDAPDOMAIN"
 
 if  [ $1 = "add" ]; then
     $LDAPADD << EOF
@@ -22,6 +22,7 @@ dn: $USERDN
 objectClass: organizationalPerson
 objectClass: person
 objectClass: extensibleObject
+objectClass: posixAccount
 objectClass: uidObject
 objectClass: inetOrgPerson
 objectClass: top
@@ -30,13 +31,16 @@ givenName: $USER
 sn: $USER
 uid: $USER
 mail: $USER@ossystem.ua
-ou: Users
+ou: users
 userpassword: ome
+uidNumber: 10000
+gidNumber: 10000
+homeDirectory: /home/$USER
 EOF
 elif [ $1 = "in" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+    GROUPDN="cn=$GROUP,ou=groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -47,7 +51,7 @@ EOF
 elif [ $1 = "out" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+    GROUPDN="cn=$GROUP,ou=groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -58,7 +62,7 @@ EOF
 elif [ $1 = "owner" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+    GROUPDN="cn=$GROUP,ou=groups,$LDAPDOMAIN"
 
 $LDAPMODIFY << EOF
 dn: $GROUPDN
@@ -69,7 +73,7 @@ EOF
 elif [ $1 = "member" ]; then
     shift
     GROUP=$1
-    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+    GROUPDN="cn=$GROUP,ou=groups,$LDAPDOMAIN"
 
     $LDAPMODIFY << EOF
 dn: $GROUPDN

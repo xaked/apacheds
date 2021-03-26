@@ -41,7 +41,7 @@ Example
     ./ldapmanager member g1 u1 --remove
     ./ldapmanager owner g1 u2 --remove
     ./ldapmanager member g1 u2 --remove
-    ./ldapmanager get uid=u2,ou=Users,dc=ossystem,dc=ua
+    ./ldapmanager get uid=u2,ou=users,dc=ossystem,dc=ua
     ./ldapmanager clear
 
 """
@@ -101,7 +101,7 @@ all current passwords (default) or appending passwords with --append. Passwords
 can be set for one user at a time. If no option is chosen, then the current user
 (--bind-user) will be used. --admin will use the value of $LDAP_ADMIN_DN
 (default: uid=admin,ou=system) while --login can be used to specify a user
-in ou=Users. --dn can be used to explicitly pass any distinguished name. One or
+in ou=users. --dn can be used to explicitly pass any distinguished name. One or
 more passwords can be set from both the command-line, using --password, or via
 file inputs. If you are on an untrusted system, prefer file inputs. If no
 password is passed, then a secure dialog will be opened to ask for one.""")
@@ -158,10 +158,10 @@ password is passed, then a secure dialog will be opened to ask for one.""")
     clear = subparsers.add_parser("clear")
     clear.set_defaults(func=_clear)
     clear.add_argument("dn", nargs="*",
-                       help="Defaults to 'Users' and 'Groups'",
+                       help="Defaults to 'users' and 'Groups'",
                        default=(
-                           "ou=Groups,dc=ossystem,dc=ua",
-                           "ou=Users,dc=ossystem,dc=ua",
+                           "ou=groups,dc=ossystem,dc=ua",
+                           "ou=users,dc=ossystem,dc=ua",
                        ))
 
     # Run #####################################################################
@@ -179,7 +179,7 @@ def connection(ns):
     return conn
 
 
-def cleanup(ns, ou="Users"):
+def cleanup(ns, ou="users"):
     """
     Massage the argparse namespace for better defaults
     """
@@ -193,9 +193,9 @@ def cleanup(ns, ou="Users"):
         ns.dn = dn(ns, login, ou)
 
 
-def dn(ns, login, ou="Users"):
+def dn(ns, login, ou="users"):
     id = "uid"
-    if ou != "Users":
+    if ou != "users":
         id = "cn"
     return "%s=%s,ou=%s,%s" % (id, login, ou, ns.base)
 
@@ -205,7 +205,7 @@ def dn_user(ns, login):
 
 
 def dn_group(ns, login):
-    return dn(ns, login, ou="Groups")
+    return dn(ns, login, ou="groups")
 
 
 def get_by_dn(conn, dn):
@@ -281,20 +281,30 @@ def _init(ns):
     cleanup(ns)
 
     actions = [
-        ("ou=Users,%s" % ns.base, {
+        ("ou=users,%s" % ns.base, {
             "objectClass": [
                 "organizationalUnit",
                 "top"
             ],
-            "ou": ["Users"],
+            "ou": ["users"],
         }),
-        ("ou=Groups,%s" % ns.base, {
+        ("ou=groups,%s" % ns.base, {
             "objectClass": [
                 "organizationalUnit",
                 "top"
             ],
-            "ou": ["Groups"],
+            "ou": ["groups"],
         }),
+        ("cn=nis,ou=schema", {
+            'changetype': 'modify',
+            'delete': 'm-disabled',
+            'm-disabled': 'TRUE'
+        }),
+        ("cn=nis,ou=schema", {
+            'changetype': 'modify',
+            'add': 'm-disabled',
+            'm-disabled': 'FALSE'
+        })
     ]
 
     for dn, modlist in actions:
@@ -316,7 +326,7 @@ def _user(ns):
         "givenName": [ns.first],
         "sn": [ns.last],
         "uid": [ns.login],
-        "ou": ["Users"],
+        "ou": ["users"],
     }
     if ns.password:
         modlist["userPassword"] = ns.password
@@ -358,14 +368,14 @@ def _passwd(ns):
 
 
 def _group(ns):
-    cleanup(ns, ou="Groups")
+    cleanup(ns, ou="groups")
 
     modlist = {
         "objectClass": [
             "groupOfUniqueNames",
             "top"],
         "cn": [ns.login],
-        "ou": ["Groups"],
+        "ou": ["groups"],
     }
 
     members = set(ns.member)
@@ -373,19 +383,19 @@ def _group(ns):
         rv = []
         modlist["owner"] = rv
         for owner in ns.owner:
-            rv.append(dn(ns, owner, ou="Users"))
+            rv.append(dn(ns, owner, ou="users"))
             members.add(owner)
     if members:
         rv = []
         modlist["uniqueMember"] = rv
         for member in members:
-            rv.append(dn(ns, member, ou="Users"))
+            rv.append(dn(ns, member, ou="users"))
 
     process(ns, ns.dn, modlist)
 
 
 def _member(ns):
-    cleanup(ns, ou="Groups")
+    cleanup(ns, ou="groups")
     action = ldap.MOD_ADD
     if not ns.add:
         action = ldap.MOD_DELETE
@@ -394,7 +404,7 @@ def _member(ns):
 
 
 def _owner(ns):
-    cleanup(ns, ou="Groups")
+    cleanup(ns, ou="groups")
     action = ldap.MOD_ADD
     if not ns.add:
         action = ldap.MOD_DELETE

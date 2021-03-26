@@ -1,17 +1,21 @@
-FROM ubuntu:16.04
-MAINTAINER ome-devel@lists.openmicroscopy.org.uk
+FROM ubuntu:18.04
+LABEL MAINTAINER="u@xaked.com"\
+      APACHEDS_VERSION="2.0.0.AM26"\
+      ARCH="amd64"\
+      OS="ubuntu"\
+      OS_VERSION="18.04"
 
 #############################################
 # ApacheDS installation
 #############################################
 
-ENV APACHEDS_VERSION 2.0.0.AM26
-ENV APACHEDS_ARCH amd64
+ENV APACHEDS_VERSION=2.0.0.AM26\
+ APACHEDS_ARCH=amd64
 
-ENV APACHEDS_ARCHIVE apacheds-${APACHEDS_VERSION}-${APACHEDS_ARCH}.deb
-ENV APACHEDS_DATA /var/lib/apacheds
-ENV APACHEDS_USER apacheds
-ENV APACHEDS_GROUP apacheds
+ENV APACHEDS_ARCHIVE=apacheds-${APACHEDS_VERSION}-${APACHEDS_ARCH}.deb\
+ APACHEDS_DATA=/var/lib/apacheds\
+ APACHEDS_USER=apacheds\
+ APACHEDS_GROUP=apacheds
 
 RUN ln -s ${APACHEDS_DATA}-${APACHEDS_VERSION} ${APACHEDS_DATA}
 VOLUME ${APACHEDS_DATA}
@@ -25,7 +29,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     && apt-get install -y \
        ldap-utils \
        procps \
-       openjdk-8-jre-headless \
+       openjdk-11-jre-headless \
        curl \
        jq \
     && curl https://downloads.apache.org/directory/apacheds/dist/${APACHEDS_VERSION}/${APACHEDS_ARCHIVE} > ${APACHEDS_ARCHIVE} \
@@ -39,14 +43,14 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 # 60464: changePasswordServer
 # 8080: http
 # 8443: https
-EXPOSE 10389 10636 60088 60464 8080 8443
+EXPOSE 10389 10636
 
 #############################################
 # ApacheDS bootstrap configuration
 #############################################
 
-ENV APACHEDS_INSTANCE default
-ENV APACHEDS_BOOTSTRAP /bootstrap
+ENV APACHEDS_INSTANCE=default\
+ APACHEDS_BOOTSTRAP=/bootstrap
 
 ADD scripts/run.sh /run.sh
 RUN chown ${APACHEDS_USER}:${APACHEDS_GROUP} /run.sh \
@@ -54,15 +58,18 @@ RUN chown ${APACHEDS_USER}:${APACHEDS_GROUP} /run.sh \
 
 ADD instance/* ${APACHEDS_BOOTSTRAP}/conf/
 RUN sed -i "s/ads-contextentry:: [A-Za-z0-9\+\=\/]*/ads-contextentry:: $(base64 -w 0 $APACHEDS_BOOTSTRAP/conf/ads-contextentry.decoded)/g" /$APACHEDS_BOOTSTRAP/conf/config.ldif
-ADD ome.ldif ${APACHEDS_BOOTSTRAP}/
+ADD base.ldif ${APACHEDS_BOOTSTRAP}/
+COPY bin/* /usr/bin/
 RUN mkdir ${APACHEDS_BOOTSTRAP}/cache \
     && mkdir ${APACHEDS_BOOTSTRAP}/run \
     && mkdir ${APACHEDS_BOOTSTRAP}/log \
     && mkdir ${APACHEDS_BOOTSTRAP}/partitions \
-    && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_BOOTSTRAP}
+    && touch /var/log/journal.log\
+    && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} ${APACHEDS_BOOTSTRAP}\
+    && chown -R ${APACHEDS_USER}:${APACHEDS_GROUP} /var/log/journal.log\
+    && chmod u+rw /usr/bin/*
 
 RUN apt-get install -y python-ldap
-ADD bin/ldapmanager /usr/local/bin/ldapmanager
 
 #############################################
 # ApacheDS wrapper command

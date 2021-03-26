@@ -8,13 +8,22 @@ LDAPDOMAIN=${LDAPDOMAIN:-dc=ossystem,dc=ua}
 ldapadd -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -D uid=admin,ou=system -x  << EOF
 version: 1
 
-dn: ou=Users,$LDAPDOMAIN
+dn: ou=users,$LDAPDOMAIN
 objectClass: organizationalUnit
 objectClass: top
-ou: Users
+ou: users
 
-dn: ou=Groups,$LDAPDOMAIN
+dn: ou=groups,$LDAPDOMAIN
 objectClass: organizationalUnit
 objectClass: top
-ou: Groups
+ou: groups
+
+dn: cn=nis,ou=schema
+changetype: modify
+delete: m-disabled
+m-disabled: TRUE
+-
+add: m-disabled
+m-disabled: FALSE
+-
 EOF

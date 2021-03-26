@@ -29,8 +29,8 @@ ads-directoryserviceid: default
 ads-dsreplicaid: 1
 ads-dssyncperiodmillis: 15000
 ads-dsPasswordHidden: FALSE
-ads-dsallowanonymousaccess: TRUE
-ads-dsaccesscontrolenabled: FALSE
+ads-dsallowanonymousaccess: FALSE
+ads-dsaccesscontrolenabled: TRUE
 ads-dsdenormalizeopattrsenabled: FALSE
 ads-enabled: TRUE
 
@@ -47,10 +47,10 @@ objectclass: top
 objectclass: ads-base
 objectclass: ads-journal
 ads-journalId: defaultJournal
-ads-journalFileName: Journal.txt
-ads-journalWorkingDir: /
-ads-journalRotation: 2
-ads-enabled: FALSE
+ads-journalFileName: journal.log
+ads-journalWorkingDir: /var/log/
+ads-journalRotation: 1000
+ads-enabled: TRUE
 
 dn: ou=interceptors,ads-directoryServiceId=default,ou=config
 ou: interceptors
@@ -136,7 +136,7 @@ ads-pwdMinAge: 0
 ads-pwdAllowUserChange: TRUE
 ads-pwdGraceAuthNLimit: 5
 ads-pwdCheckQuality: 1
-ads-pwdMaxLength: 0 
+ads-pwdMaxLength: 0
 ads-pwdGraceExpire: 0
 ads-pwdMinDelay: 0
 ads-pwdMaxDelay: 0
